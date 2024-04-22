@@ -1,0 +1,14 @@
+.house_location_block{
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	margin-bottom: 20px;
+}
+.location_info_header{
+	margin-bottom: 5px;
+	font-size: 16px;
+	font-weight: bold;
+}
+.location_info_address{
+	color: #4F7396;
+}

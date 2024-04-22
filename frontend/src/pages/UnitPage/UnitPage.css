@@ -1,0 +1,28 @@
+.main{
+	max-width: 960px;
+	margin: 0 auto;
+}
+p{
+	color: #4F7396;
+}
+.title{
+	text-align: center;
+}
+.title_p{
+	text-align: center;
+}
+.interactive {
+	position: relative;
+	text-align: center;
+}
+svg{
+	position: absolute;
+}
+.part{
+	opacity: .3;
+}
+.part:hover{
+	transition: opacity .2s ease;
+	cursor: pointer;
+	opacity: .5;
+}

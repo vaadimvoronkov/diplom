@@ -1,0 +1,12 @@
+.floor_element{
+	width: 185px;
+	height: 58px;
+	border: 1px solid #D1DBE8;
+	border-radius: 8px;
+	text-align: center;
+	padding-top: 19px;
+}
+.floor_element:hover{
+	border: 1px solid rgb(71, 152, 234);
+	cursor: pointer;
+}

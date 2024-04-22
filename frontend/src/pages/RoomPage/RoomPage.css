@@ -1,0 +1,16 @@
+main{
+	max-width: 100%;
+}
+p{
+	color: #4F7396;
+}
+.title{
+	text-align: center;
+}
+.title_p{
+	text-align: center;
+}
+.description{
+	border-bottom: 1px solid #E8EDF2;
+	padding-bottom:20px ;
+}

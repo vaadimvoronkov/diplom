@@ -1,0 +1,18 @@
+header{
+	padding: 0px 40px 0px 40px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #E8EDF2;
+	margin-bottom: 20px;
+}
+.header_button{
+	width: 84px;
+	height: 40px;
+	background-color: #1A80E5;
+	color: white;
+	border: none;
+	border-radius: 12px;
+}

@@ -1,0 +1,42 @@
+.houses{
+	max-width: 512px;
+	margin: 0 auto;
+	padding: 20px 16px 20px 16px;
+}
+.input_block{
+	padding-top: 12px;
+	margin-bottom: 12px;
+}
+.search_input{
+	width: 480px;
+	height: 48px;
+	border-radius: 12px;
+	background-color: #E8EDF2;
+	border: none;
+	padding: 0px 15px 0px 15px;
+}
+.image_house_section{
+	border-radius: 12px;
+	width: 236px;
+	height: 131px;
+	margin-bottom: 12px;
+	box-shadow:0 0 10px #555;
+}
+.houses_wrapper{
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+.house_section{
+	padding-top: 16px;
+	max-width: 234px;
+}
+.house_section:hover{
+	cursor: pointer;
+}
+.house_description{
+	color: #4F7396;
+}
+h3{
+	margin-bottom: 20px;
+}
