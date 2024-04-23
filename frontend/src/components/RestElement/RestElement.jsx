@@ -9,8 +9,8 @@ const MyComponent = () => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [color, setColor] = useState('#000000');
-  const [width, setWidth] = useState(50); // Ширина объекта по умолчанию
-  const [height, setHeight] = useState(50); // Высота объекта по умолчанию
+  const [width, setWidth] = useState(); // Ширина объекта по умолчанию
+  const [height, setHeight] = useState(); // Высота объекта по умолчанию
   const [roomId] = useState(1); // Задаем ID кабинета заранее
 
   const canvasRef = useRef(null); // Reference to the canvas element
@@ -82,7 +82,9 @@ const MyComponent = () => {
         date: selectedObject.date,
         width: selectedObject.width,
         height: selectedObject.height,
-        color: selectedObject.color
+        color: selectedObject.color,
+        x: selectedObject.x,
+        y: selectedObject.y,
       });
       const updatedData = data.map(item => (item.id === id ? selectedObject : item));
       setData(updatedData);
@@ -96,26 +98,27 @@ const MyComponent = () => {
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-
+  
     let clickedItem = null;
     data.forEach(item => {
-      const itemX = item.x;
-      const itemY = item.y;
-
+      console.log('item:', item); // Выводим данные о текущем объекте в консоль для отладки
+  
       if (
-        mouseX >= itemX &&
-        mouseX <= itemX + item.width &&
-        mouseY >= itemY &&
-        mouseY <= itemY + item.height
+        mouseX >= item.x &&
+        mouseX <= item.x + item.width &&
+        mouseY >= item.y &&
+        mouseY <= item.y + item.height
       ) {
         clickedItem = item;
       }
     });
-
+  
     if (clickedItem) {
       setDragging(true);
       setSelectedObject(clickedItem);
-      setOffset({ x: mouseX - clickedItem.x, y: mouseY - clickedItem.y });
+      const offsetX = mouseX - clickedItem.x;
+      const offsetY = mouseY - clickedItem.y;
+      setOffset({ x: offsetX, y: offsetY });
     }
   };
 
@@ -230,7 +233,7 @@ const MyComponent = () => {
                 <td>{item.date}</td>
                 <td>
                   <button onClick={() => handleDelete(item.id)}>Удалить</button>
-                  <button onClick={() => handleEdit(item.id)}>Редактировать</button>
+                  <button onClick={() => handleEdit(item.id)}>Cохранить позицию</button>
                 </td>
               </tr>
             ))}
