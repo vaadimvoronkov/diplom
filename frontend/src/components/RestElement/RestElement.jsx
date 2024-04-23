@@ -9,14 +9,15 @@ const MyComponent = () => {
   const [description, setDescription] = useState('');
   const [date, setDate] = useState('');
   const [color, setColor] = useState('#000000');
-  const [width, setWidth] = useState(); // Ширина объекта по умолчанию
-  const [height, setHeight] = useState(); // Высота объекта по умолчанию
-  const [roomId] = useState(1); // Задаем ID кабинета заранее
+  const [width, setWidth] = useState();
+  const [height, setHeight] = useState();
+  const [roomId] = useState(1);
 
-  const canvasRef = useRef(null); // Reference to the canvas element
-  const [selectedObject, setSelectedObject] = useState(null); // Currently selected object
-  const [dragging, setDragging] = useState(false); // State to track dragging
-  const [offset, setOffset] = useState({ x: 0, y: 0 }); // Offset from mouse pointer to object position
+  const canvasRef = useRef(null);
+  const [selectedObject, setSelectedObject] = useState(null);
+  const [dragging, setDragging] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [hoveredObject, setHoveredObject] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -45,7 +46,7 @@ const MyComponent = () => {
         name,
         description,
         date,
-        x: 200, // Starting coordinates inside the room
+        x: 200,
         y: 150,
         width,
         height,
@@ -56,9 +57,9 @@ const MyComponent = () => {
       setName('');
       setDescription('');
       setDate('');
-      setWidth(50); // Reset width to default value
-      setHeight(50); // Reset height to default value
-      setColor('#000000'); // Reset color to default value
+      setWidth(50);
+      setHeight(50);
+      setColor('#000000');
       handlePopupClose();
     } catch (error) {
       console.error('Ошибка при добавлении объекта:', error);
@@ -74,35 +75,14 @@ const MyComponent = () => {
     }
   };
 
-  const handleEdit = async (id) => {
-    try {
-      await axios.put(`http://127.0.0.1:8000/api/roomitems/roomitem/update/${id}/`, {
-        name: selectedObject.name,
-        description: selectedObject.description,
-        date: selectedObject.date,
-        width: selectedObject.width,
-        height: selectedObject.height,
-        color: selectedObject.color,
-        x: selectedObject.x,
-        y: selectedObject.y,
-      });
-      const updatedData = data.map(item => (item.id === id ? selectedObject : item));
-      setData(updatedData);
-    } catch (error) {
-      console.error('Ошибка при редактировании объекта:', error);
-    }
-  };
-
   const handleMouseDown = (e) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-  
+
     let clickedItem = null;
     data.forEach(item => {
-      console.log('item:', item); // Выводим данные о текущем объекте в консоль для отладки
-  
       if (
         mouseX >= item.x &&
         mouseX <= item.x + item.width &&
@@ -112,13 +92,11 @@ const MyComponent = () => {
         clickedItem = item;
       }
     });
-  
+
     if (clickedItem) {
       setDragging(true);
       setSelectedObject(clickedItem);
-      const offsetX = mouseX - clickedItem.x;
-      const offsetY = mouseY - clickedItem.y;
-      setOffset({ x: offsetX, y: offsetY });
+      setOffset({ x: mouseX - clickedItem.x, y: mouseY - clickedItem.y });
     }
   };
 
@@ -137,10 +115,45 @@ const MyComponent = () => {
 
         setData([...data]);
       }
-    }
-  };
+    } else {
+      const canvas = canvasRef.current;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
 
-  const handleMouseUp = () => {
+      let hoveredItem = null;
+      data.forEach(item => {
+        if (
+          mouseX >= item.x &&
+          mouseX <= item.x + item.width &&
+          mouseY >= item.y &&
+          mouseY <= item.y + item.height
+        ) {
+          hoveredItem = item;
+        }
+      });
+
+      setHoveredObject(hoveredItem);
+    }
+  };const handleMouseUp = async () => {
+    if (dragging && selectedObject) {
+      try {
+        await axios.put(`http://127.0.0.1:8000/api/roomitems/roomitem/update/${selectedObject.id}/`, {
+          name: selectedObject.name,
+          description: selectedObject.description,
+          date: selectedObject.date,
+          width: selectedObject.width,
+          height: selectedObject.height,
+          color: selectedObject.color,
+          x: selectedObject.x,
+          y: selectedObject.y,
+        });
+        const updatedData = data.map(item => (item.id === selectedObject.id ? selectedObject : item));
+        setData(updatedData);
+      } catch (error) {
+        console.error('Ошибка при редактировании объекта:', error);
+      }
+    }
     setDragging(false);
   };
 
@@ -149,16 +162,21 @@ const MyComponent = () => {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw room
     ctx.fillStyle = 'gray';
     ctx.fillRect(200, 150, 800, 600);
 
-    // Draw objects
     data.forEach(item => {
       ctx.fillStyle = item.color || 'blue';
       ctx.fillRect(item.x, item.y, item.width, item.height);
     });
-  }, [data]);
+
+    if (hoveredObject) {
+      ctx.fillStyle = 'black';
+      ctx.fillText(`ID: ${hoveredObject.id}, ${hoveredObject.date}`, hoveredObject.x, hoveredObject.y - 35);
+      ctx.fillText(`${hoveredObject.name}`, hoveredObject.x, hoveredObject.y - 20);
+      ctx.fillText(`${hoveredObject.description}`, hoveredObject.x, hoveredObject.y - 5);
+    }
+  }, [data, hoveredObject]);
 
   return (
     <div>
@@ -233,7 +251,6 @@ const MyComponent = () => {
                 <td>{item.date}</td>
                 <td>
                   <button onClick={() => handleDelete(item.id)}>Удалить</button>
-                  <button onClick={() => handleEdit(item.id)}>Cохранить позицию</button>
                 </td>
               </tr>
             ))}
