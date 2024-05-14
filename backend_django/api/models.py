@@ -23,6 +23,8 @@ class Room(models.Model):
 
 class RoomItem(models.Model):
     name = models.CharField(max_length=100)
+    price = models.IntegerField(default=0)
+    inventory_number = models.CharField(max_length=50,default='')
     description = models.TextField()
     date = models.DateField()
     x = models.IntegerField()

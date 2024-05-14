@@ -12,6 +12,8 @@ const MyComponent = () => {
   const [width, setWidth] = useState();
   const [height, setHeight] = useState();
   const [roomId] = useState(1);
+  const [price, setPrice] = useState(0);
+  const [inventory_number, setInventory_number] = useState();
 
   const canvasRef = useRef(null);
   const [selectedObject, setSelectedObject] = useState(null);
@@ -51,14 +53,18 @@ const MyComponent = () => {
         width,
         height,
         color,
+        price,
+        inventory_number,
         room: roomId
       });
       setData([...data, response.data]);
       setName('');
       setDescription('');
       setDate('');
-      setWidth(50);
-      setHeight(50);
+      setWidth(0);
+      setHeight(0);
+      setPrice(0);
+      setInventory_number('');
       setColor('#000000');
       handlePopupClose();
     } catch (error) {
@@ -147,6 +153,8 @@ const MyComponent = () => {
           color: selectedObject.color,
           x: selectedObject.x,
           y: selectedObject.y,
+          price: selectedObject.price,
+          inventory_number: selectedObject.inventory_number,
         });
         const updatedData = data.map(item => (item.id === selectedObject.id ? selectedObject : item));
         setData(updatedData);
@@ -172,9 +180,11 @@ const MyComponent = () => {
 
     if (hoveredObject) {
       ctx.fillStyle = 'black';
-      ctx.fillText(`ID: ${hoveredObject.id}, ${hoveredObject.date}`, hoveredObject.x, hoveredObject.y - 35);
-      ctx.fillText(`${hoveredObject.name}`, hoveredObject.x, hoveredObject.y - 20);
-      ctx.fillText(`${hoveredObject.description}`, hoveredObject.x, hoveredObject.y - 5);
+      ctx.fillText(`ID: ${hoveredObject.id}, ${hoveredObject.date}`, hoveredObject.x, hoveredObject.y - 65);
+      ctx.fillText(`${hoveredObject.name}`, hoveredObject.x, hoveredObject.y - 50);
+      ctx.fillText(`${hoveredObject.description}`, hoveredObject.x, hoveredObject.y - 35);
+      ctx.fillText(`Стоимость: ${hoveredObject.price}`, hoveredObject.x, hoveredObject.y - 20);
+      ctx.fillText(`Инвентаризационный номер: ${hoveredObject.inventory_number}`, hoveredObject.x, hoveredObject.y - 5);
     }
   }, [data, hoveredObject]);
 
@@ -197,6 +207,14 @@ const MyComponent = () => {
                 <input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
               </label>
               <label>
+                Стоимость:
+                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+              </label>
+              <label>
+              <label>
+                Инвентаризационный номер:
+                <input type="text" value={inventory_number} onChange={(e) => setInventory_number(e.target.value)} />
+              </label>
                 Дата добавления:
                 <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               </label>
@@ -239,6 +257,8 @@ const MyComponent = () => {
               <th>Название</th>
               <th>Описание</th>
               <th>Дата добавления</th>
+              <th>Цена</th>
+              <th>Инвентаризационный номер</th>
               <th>Действия</th>
             </tr>
           </thead>
@@ -249,6 +269,8 @@ const MyComponent = () => {
                 <td>{item.name}</td>
                 <td>{item.description}</td>
                 <td>{item.date}</td>
+                <td>{item.price}</td>
+                <td>{item.inventory_number}</td>
                 <td>
                   <button onClick={() => handleDelete(item.id)}>Удалить</button>
                 </td>
